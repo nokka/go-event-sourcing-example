@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/mishudark/eventhus"
@@ -61,19 +63,22 @@ func main() {
 			// Create an application.
 			var application commands.CreateApplication
 			application.AggregateID = uuid
-			application.LoanAmount = 50000
+			application.LoanAmount = rand.Intn(50000)
 
+			fmt.Println("Creating application with aggregate id: ", application.AggregateID)
 			bus.HandleCommand(application)
 
 			// Perform a change on the loan amount.
+			amount := rand.Intn(300000)
 			time.Sleep(time.Millisecond * 100)
 			change := commands.ChangeLoanAmount{
-				LoanAmount: 300000,
+				LoanAmount: amount,
 			}
 
 			change.AggregateID = uuid
 			change.Version = 1
 
+			fmt.Println("Changing loan amount to: ", amount)
 			bus.HandleCommand(change)
 		}()
 	}
